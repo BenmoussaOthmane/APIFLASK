@@ -99,6 +99,12 @@ def Updet(price):
     mod[0]['price'] = request.json['price']
     return jsonify({'Imac':mod[0]})
 
+# delait un marque de apple 
+@app.route('/Imac/sup/<int:Id>' , methods = ['DELETE'])
+def sup(Id):
+    S = [d for d in dictioner if d['Id'] == Id]
+    dictioner.remove(S[0])
+    return jsonify({'Imac' : dictioner})
 
 
 
