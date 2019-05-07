@@ -1,13 +1,21 @@
-from flask import Flask,jsonify,request
+from flask import Flask,jsonify,request,make_response
 import json
 import os
 
 
+#  Name APP
+app = Flask(__name__)
 
 #  Name APP
 
-app = Flask(__name__)
+#  Login
 
+@app.route('/login' , methods  = ['GET'])
+def login():
+    auth = request.authorization
+    if auth and auth.password == 'pasword': 
+        return 'beni venou '
+    return make_response('clod not virify' , 404 , {'khfksdjhf' : 'kldfjkdlsfjdk'})
 
 
 ###########  PARCING LE FICHER JSON EN DICTIONARY  ##############
