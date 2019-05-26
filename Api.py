@@ -1,21 +1,59 @@
-from flask import Flask,jsonify,request,make_response
+from flask import Flask,jsonify,request,make_response,render_template
+from flask_sqlalchemy import SQLAlchemy
+import uuid
+from werkzeug.security import generate_password_hash , check_password_hash
+
 import json
 import os
 
 
-#  Name APP
-app = Flask(__name__)
+
 
 #  Name APP
+app = Flask(__name__ ,  template_folder ="/Users/benmoussaothmane/Desktop/Flask_API/template")
 
-#  Login
+app.config['SECRET_KEY'] ='thisissecret'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/benmoussaothmane/Desktop/Flask_API/mac.db'
+db= SQLAlchemy(app)
 
-@app.route('/login' , methods  = ['GET'])
-def login():
-    auth = request.authorization
-    if auth and auth.password == 'pasword': 
-        return 'beni venou '
-    return make_response('clod not virify' , 404 , {'khfksdjhf' : 'kldfjkdlsfjdk'})
+class User(db.Model):
+    id = db.Column(db.Integer , primary_key = True)
+    public_id = db.column(db.String(50))
+    name = db.column(db.String(50))
+    pasword = db.column(db.String(50))
+@app.route('/user' , methods = ['GET'])
+def get_all_User():
+    users =User.query.all()
+    output = []
+    for user in users:
+
+        user_data = {}
+        user_data['name'] = user.name
+        user_data['public_id'] = user.public_id
+        user_data['pasword'] = user.pasword
+        output.append(user_data)
+    return jsonify({'users' : output})
+
+
+
+
+
+@app.route('/user/<id>',methods = ['GET'])
+def oneUser(id):
+    user = User.query.filter_by(id = id).first()
+    if not user:
+        return jsonify({'messeg' : 'not existe User'})
+    
+    user_data = {}
+    user_data['name'] = user.name
+    user_data['public_id'] = user.public_id
+    user_data['pasword'] = user.pasword
+    return jsonify({'user' : user_data})
+
+
+
+#  Name APP
+
 
 
 ###########  PARCING LE FICHER JSON EN DICTIONARY  ##############
@@ -40,8 +78,8 @@ except IOError:
 
 # cration index de API
 @app.route('/' , methods = ['GET'])
-def index():
-    return '<h1> Bienvenu  </h1>'
+def indeex():
+    return render_template("index.html")
 
 
 
@@ -57,6 +95,7 @@ def Imac():
 def Oneid(Id):
     i = [id for id in dictioner if id['Id'] == Id]
     return jsonify({'Imac' : i})
+
 
 
 
